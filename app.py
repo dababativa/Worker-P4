@@ -16,6 +16,7 @@ print(AWS_ACCESS_KEY_ID)
 print(QUEUE_URL)
 print(BUCKET_NAME)
 print(dir_path)
+prat(babanas)
 # Create SQS client
 sqs = boto3.client('sqs', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name='us-east-1')
 queue_url = QUEUE_URL
