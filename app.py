@@ -141,4 +141,3 @@ def worker():
 
 while True:
     worker()  
-    time.sleep(10)
