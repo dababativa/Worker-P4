@@ -4,6 +4,7 @@ from pydub import AudioSegment
 import ffmpeg
 import time
 import timeit
+import requests
 from botocore.exceptions import ClientError
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -80,47 +81,54 @@ def deleteMessage(receipt_handle):
 )
 
 def sendEmailNotification(email):
-    SENDER = "voice.contest.cloud@gmail.com"
-    RECIPIENT = email
-    AWS_REGION = "us-east-2"
-    SUBJECT = "Voz Convertida"
-    BODY_TEXT = ("Su voz ha sido convertida desde los servicios de Heroku\r\n"
-                "Puede iniciar sesión para escucharla online en la plataforma"
-                )
-    CHARSET = "UTF-8"
+    # SENDER = "voice.contest.cloud@gmail.com"
+    # RECIPIENT = email
+    # AWS_REGION = "us-east-2"
+    # SUBJECT = "Voz Convertida"
+    # BODY_TEXT = ("Su voz ha sido convertida desde los servicios de Heroku\r\n"
+    #             "Puede iniciar sesión para escucharla online en la plataforma"
+    #             )
+    # CHARSET = "UTF-8"
 
-    mail_client = boto3.client('ses', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name='us-east-2')
+    # mail_client = boto3.client('ses', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name='us-east-2')
 
 
-    message = {
-                'Body': {
-                    'Text': {
-                        'Charset': CHARSET,
-                        'Data': BODY_TEXT,
-                    },
-                },
-                'Subject': {
-                    'Charset': CHARSET,
-                    'Data': SUBJECT,
-                },
-            }
+    # message = {
+    #             'Body': {
+    #                 'Text': {
+    #                     'Charset': CHARSET,
+    #                     'Data': BODY_TEXT,
+    #                 },
+    #             },
+    #             'Subject': {
+    #                 'Charset': CHARSET,
+    #                 'Data': SUBJECT,
+    #             },
+    #         }
 
-    try:
-        response = mail_client.send_email(
-            Destination={
-                'ToAddresses': [
-                    RECIPIENT,
-                ],
-            },
-            Message = message,
+    # try:
+    #     response = mail_client.send_email(
+    #         Destination={
+    #             'ToAddresses': [
+    #                 RECIPIENT,
+    #             ],
+    #         },
+    #         Message = message,
             
-            Source=SENDER,
-        )
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        print("Email sent! Message ID:"),
-        print(response['MessageId'])
+    #         Source=SENDER,
+    #     )
+    # except ClientError as e:
+    #     print(e.response['Error']['Message'])
+    # else:
+    #     print("Email sent! Message ID:"),
+    #     print(response['MessageId'])
+    return requests.post(
+		f"https://api.mailgun.net/v3/{os.environ.get('MAILGUN_DOMAIN')}/messages",
+		auth=("api", f"{os.environ.get('MAILGUN_API_KEY')}"),
+		data={"from": f"Excited User <mailgun@{os.environ.get('MAILGUN_DOMAIN')}>",
+			"to": [f"{email}"],
+			"subject": "Voz Convertida",
+			"text": "Su voz ha sido convertida. Correo enviado usando el addon de mailgun de heroku!"})
 
 
 def worker():
@@ -131,7 +139,7 @@ def worker():
         newPath=changeFileType(path)
         print('File with new extension')
         deleteMessage(receiptHandle)
-        # sendEmailNotification(email)
+        sendEmailNotification(email)
         if os.path.exists(f'{dir_path}/processed/'+newPath):
             uploadFileS3(newPath)
             print('File uploaded')
