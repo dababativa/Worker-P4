@@ -122,6 +122,8 @@ def sendEmailNotification(email):
     # else:
     #     print("Email sent! Message ID:"),
     #     print(response['MessageId'])
+    print(os.environ.get('MAILGUN_DOMAIN'))
+    print(os.environ.get('MAILGUN_API_KEY'))
     requests.post(
 		f"https://api.mailgun.net/v3/{os.environ.get('MAILGUN_DOMAIN')}/messages",
 		auth=("api", f"{os.environ.get('MAILGUN_API_KEY')}"),
