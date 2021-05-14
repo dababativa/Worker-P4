@@ -124,10 +124,11 @@ def sendEmailNotification(email):
     #     print(response['MessageId'])
     print(os.environ.get('MAILGUN_DOMAIN'))
     print(os.environ.get('MAILGUN_API_KEY'))
+    print(f"https://api.mailgun.net/v3/{os.environ.get('MAILGUN_DOMAIN')}/messages")
     requests.post(
 		f"https://api.mailgun.net/v3/{os.environ.get('MAILGUN_DOMAIN')}/messages",
 		auth=("api", f"{os.environ.get('MAILGUN_API_KEY')}"),
-		data={"from": f"Excited User <mailgun@{os.environ.get('MAILGUN_DOMAIN')}>",
+		data={"from": f"mailgun@{os.environ.get('MAILGUN_DOMAIN')}",
 			"to": [f"{email}"],
 			"subject": "Voz Convertida",
 			"text": "Su voz ha sido convertida. Correo enviado usando el addon de mailgun de heroku!"})
