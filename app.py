@@ -149,7 +149,7 @@ def worker():
         newPath=changeFileType(path)
         print('File with new extension')
         deleteMessage(receiptHandle)
-        sendEmailNotification(email)
+        # sendEmailNotification(email)
         if os.path.exists(f'{dir_path}/processed/'+newPath):
             uploadFileS3(newPath)
             print('File uploaded')
